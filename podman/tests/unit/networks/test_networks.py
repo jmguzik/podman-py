@@ -163,3 +163,17 @@ class TestNetwork(unittest.TestCase):
             '/networks/prune',
             headers={'content-type': 'application/json'},
         )
+
+    def test_prune(self):
+        """test prune call with filter"""
+        mock_read = mock.MagicMock()
+        mock_read.return_value = b'[{"Name": "net1"}, {"Name": "net2"}]'
+        self.response.read = mock_read
+        ret = podman.networks.prune(self.api, 'label=xyz')
+        expected = [{'Name': 'net1'}, {"Name": "net2"}]
+        self.assertEqual(ret, expected)
+        self.request.assert_called_once_with(
+            '/networks/prune',
+            params={'filter': 'label=xyz'},
+            headers={'content-type': 'application/json'},
+        )

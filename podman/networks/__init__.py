@@ -60,10 +60,13 @@ def remove(api, name, force=None):
         api.raise_not_found(e, e.response, errors.NetworkNotFound)
 
 
-def prune(api):
+def prune(api, filters=None):
     """prune unused networks"""
     path = '/networks/prune'
-    response = api.post(path, headers={'content-type': 'application/json'})
+    params = {}
+    if filters is not None:
+        params['filters'] = filters
+    response = api.post(path, params=params, headers={'content-type': 'application/json'})
     return json.loads(str(response.read(), 'utf-8'))
 
 
